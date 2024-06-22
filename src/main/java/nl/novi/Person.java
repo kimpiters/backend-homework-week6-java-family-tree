@@ -111,9 +111,10 @@ public class Person {
     }
 
     public List<Person> getChildren() {
-        List<Person> sharedChildren = new ArrayList<>();
-        sharedChildren.addAll(children);
-        sharedChildren.addAll(partner.children);
+        List<Person> sharedChildren = new ArrayList<>(children);
+        if (partner != null) {
+            sharedChildren.addAll(partner.children);
+        }
         return sharedChildren;
     }
 
@@ -122,9 +123,10 @@ public class Person {
     }
 
     public List<Pet> getPets() {
-        List<Pet> sharedPets = new ArrayList<>();
-        sharedPets.addAll(pets);
+        List<Pet> sharedPets = new ArrayList<>(pets);
+        if (partner != null) {
         sharedPets.addAll(partner.pets);
+        }
         return sharedPets;
     }
 
@@ -155,36 +157,42 @@ public class Person {
         List<Person> grandChildren = new ArrayList<>();
         // Add own grandchildren
         for (Person child : children) {
-            for (Person grandChild : child.children) {
-                grandChildren.add(grandChild);
-            }
+            grandChildren.addAll(child.children);
         }
-//        // Add grandchildren through partner
-//        for (Person child : partner.children) {
-//            for (Person grandChild : child.children) {
-//                grandChildren.add(grandChild);
-//            }
-//        }
+        // Add grandchildren through partner
+        for (Person child : partner.children) {
+            grandChildren.addAll(child.children);
+        }
         return grandChildren;
     }
 
     //////////////////// BONUS METHODS ////////////////////
 
     public List<Pet> getGrandPets() {
-        List<Pet> grandPets = new ArrayList<>();
+        List<Pet> sharedGrandPets = new ArrayList<>();
         for (Person child : children) {
             for (Person grandChild : child.children) {
-                for (Pet pet : grandChild.pets) {
-                    grandPets.add(pet);
-                }
+                sharedGrandPets.addAll(grandChild.pets);
             }
         }
-        return grandPets;
+        for (Person child : partner.children) {
+            for (Person grandChild : child.children) {
+                sharedGrandPets.addAll(grandChild.pets);
+            }
+        }
+        return sharedGrandPets;
     }
 
     public List<Person> getNieces() {
         List<Person> nieces = new ArrayList<>();
         for (Person sibling : siblings) {
+            for (Person nibling : sibling.children) {
+                if (nibling.sex == 'f') {
+                    nieces.add(nibling);
+                }
+            }
+        }
+        for (Person sibling : partner.siblings) {
             for (Person nibling : sibling.children) {
                 if (nibling.sex == 'f') {
                     nieces.add(nibling);

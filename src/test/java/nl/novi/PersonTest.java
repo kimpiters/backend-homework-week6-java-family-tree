@@ -21,8 +21,8 @@ class PersonTest {
     public void canGetAndSetCharacteristics() {
         //arrange
         Person partner = new Person("Jane", "Doe", 'F', 30);
-        Person mother = new Person("Jane", "Doe", 'F', 63);
-        Person father = new Person("John", "Doe", 'M', 66);
+        Person mother = new Person("Jane", "Doe", 'F', 30);
+        Person father = new Person("John", "Doe", 'M', 30);
         //act
         person.setName("John");
         person.setMiddleName("Jane");
@@ -60,13 +60,13 @@ class PersonTest {
     @Test
     public void canGetAndSetChildren() {
         //arrange
-        Person partner = new Person("Jane", "Doe", 'F', 30);
+        Person partner = new Person("Jane","Doe", 'F', 30);
         person.setPartner(partner);
 
-        Person child1 = new Person("Jane", "Doe", 'F', 4);
-        Person child2 = new Person("John", "Doe", 'M', 2);
-        Person child3 = new Person("Jane", "Doe", 'F', 1);
-        partner.addChild(child3);
+        Person child1 = new Person("Jane", "Doe", 'F', 30);
+        Person child2 = new Person("Jane", "Doe", 'F', 30);
+        Person childOfPartner = new Person("Jane", "Doe", 'F', 30);
+        partner.addChild(childOfPartner);
 
         List<Person> children = new ArrayList<>();
         children.add(child1);
@@ -75,7 +75,7 @@ class PersonTest {
         List<Person> sharedChildren = new ArrayList<>();
         sharedChildren.add(child1);
         sharedChildren.add(child2);
-        sharedChildren.add(child3);
+        sharedChildren.add(childOfPartner);
         //act
         person.setChildren(children);
         //assert
@@ -90,8 +90,8 @@ class PersonTest {
 
         Pet pet1 = new Pet("Izar", 6, "Alaskan Husky");
         Pet pet2 = new Pet("Maya", 3, "Siberian Husky");
-        Pet pet3 = new Pet("Leia", 1, "Siberian Husky");
-        partner.addPet(pet3);
+        Pet petOfPartner = new Pet("Leia", 1, "Siberian Husky");
+        partner.addPet(petOfPartner);
 
         List<Pet> pets = new ArrayList<>();
         pets.add(pet1);
@@ -100,7 +100,7 @@ class PersonTest {
         List<Pet> sharedPets = new ArrayList<>();
         sharedPets.add(pet1);
         sharedPets.add(pet2);
-        sharedPets.add(pet3);
+        sharedPets.add(petOfPartner);
 
         //act
         person.setPets(pets);
@@ -113,8 +113,8 @@ class PersonTest {
     @Test
     public void canAddParents() {
         //arrange
-        Person mother = new Person("Jane", "Doe", 'F', 63);
-        Person father = new Person("John", "Doe", 'M', 66);
+        Person mother = new Person("Jane", "Doe", 'F', 30);
+        Person father = new Person("John", "Doe", 'M', 30);
         //act
         person.addParents(mother, father);
         //assert
@@ -125,7 +125,7 @@ class PersonTest {
     @Test
     public void canAddChild() {
         //arrange
-        Person child = new Person("Jane", "Doe", 'F', 2);
+        Person child = new Person("Jane", "Doe", 'F', 30);
         //act
         person.addChild(child);
         //assert
@@ -158,25 +158,37 @@ class PersonTest {
         //    Create and add children
         Person child1 = new Person("Jane", "Doe", 'F', 30);
         person.addChild(child1);
-        Person child2 = new Person("John", "Doe", 'M', 28);
+        Person child2 = new Person("Jane", "Doe", 'F', 30);
         person.addChild(child2);
         //    Create and add grandchildren
-        Person grandChild1 = new Person("Jane", "Doe", 'F', 4);
-        Person grandChild2 = new Person("John", "Doe", 'M', 2);
+        Person grandChild1 = new Person("Jane", "Doe", 'F', 30);
+        Person grandChild2 = new Person("Jane", "Doe", 'F', 30);
         child1.addChild(grandChild1);
         child1.addChild(grandChild2);
-        Person grandChild3 = new Person("John", "Doe", 'M', 1);
+        Person grandChild3 = new Person("Jane", "Doe", 'F', 30);
         child2.addChild(grandChild3);
-        //    Make list of grandchildren
-        List<Person> grandChildren = new ArrayList<>();
-        grandChildren.add(grandChild1);
-        grandChildren.add(grandChild2);
-        grandChildren.add(grandChild3);
+
+        //    Create and add partner
+        Person partner = new Person("Jane", "Doe", 'F', 30);
+        person.setPartner(partner);
+        //    Create and add child
+        Person childOfPartner = new Person("Jane", "Doe", 'F', 30);
+        partner.addChild(childOfPartner);
+        //    Create and add grandchild
+        Person grandChildOfPartner = new Person("Jane", "Doe", 'F', 30);
+        childOfPartner.addChild(grandChildOfPartner);
+
+        //    Make list of shared grandchildren
+        List<Person> sharedGrandChildren = new ArrayList<>();
+        sharedGrandChildren.add(grandChild1);
+        sharedGrandChildren.add(grandChild2);
+        sharedGrandChildren.add(grandChild3);
+        sharedGrandChildren.add(grandChildOfPartner);
 
         //act
         //assert
-        assertEquals(grandChildren, person.getGrandChildren());
-        assertEquals(3, person.getGrandChildren().size());
+        assertEquals(sharedGrandChildren, person.getGrandChildren());
+        assertEquals(4, person.getGrandChildren().size());
     }
 
     //////////////////// BONUS METHODS ////////////////////
@@ -184,6 +196,7 @@ class PersonTest {
     @Test
     public void canGetGrandPets() {
         //arrange
+
         //    Create and add children
         Person child1 = new Person("Jane", "Doe", 'F', 30);
         person.addChild(child1);
@@ -199,39 +212,68 @@ class PersonTest {
         grandChild1.addPet(pet1);
         Pet pet2 = new Pet("Maya", 3, "Siberian Husky");
         grandChild2.addPet(pet2);
-        //    Make list of pets
-        List<Pet> pets = new ArrayList<>();
-        pets.add(pet1);
-        pets.add(pet2);
+
+        //    Create and add partner
+        Person partner = new Person("Jane", "Doe", 'F', 30);
+        person.setPartner(partner);
+        //    Create and add child
+        Person childOfPartner = new Person("Jane", "Doe", 'F', 30);
+        partner.addChild(childOfPartner);
+        //    Create and add grandchild
+        Person grandChildOfPartner = new Person("Jane", "Doe", 'F', 30);
+        childOfPartner.addChild(grandChildOfPartner);
+        //    Create and add pet of grandchild
+        Pet pet3 = new Pet("Izar", 6, "Alaskan Huksy");
+        grandChildOfPartner.addPet(pet3);
+
+        //    Make list of shared grandpets
+        List<Pet> sharedGrandPets = new ArrayList<>();
+        sharedGrandPets.add(pet1);
+        sharedGrandPets.add(pet2);
+        sharedGrandPets.add(pet3);
+
         //act
         //assert
-        assertEquals(pets, person.getGrandPets());
-        assertEquals(2, person.getGrandPets().size());
+        assertEquals(sharedGrandPets, person.getGrandPets());
+        assertEquals(3, person.getGrandPets().size());
     }
 
     @Test
     public void canGetNieces() {
         //arrange
+
         //    Create and add siblings
         Person sibling1 = new Person("Jane", "Doe", 'F', 30);
         person.addSibling(sibling1);
-        Person sibling2 = new Person("John", "Doe", 'M', 28);
+        Person sibling2 = new Person("jane", "Doe", 'F', 30);
         person.addSibling(sibling2);
         //    Create and add niblings
-        Person nibling1 = new Person("Jane", "Doe", 'F', 4);
-        Person nibling2 = new Person("John", "Doe", 'M', 2);
+        Person nibling1 = new Person("Jane", "Doe", 'F', 30);
+        Person nibling2 = new Person("John", "Doe", 'M', 30);
         sibling1.addChild(nibling1);
         sibling1.addChild(nibling2);
         Person nibling3 = new Person("Jane", "Doe", 'F', 1);
         sibling2.addChild(nibling3);
-        //    Make list of grandchildren
-        List<Person> nieces = new ArrayList<>();
-        nieces.add(nibling1);
-        nieces.add(nibling3);
+
+        //    Create and add partner
+        Person partner = new Person("Jane", "Doe", 'F', 30);
+        person.setPartner(partner);
+        //    Create and add sibling
+        Person siblingOfPartner = new Person("Jane", "Doe", 'F', 30);
+        partner.addSibling(siblingOfPartner);
+        //    Create and add nibling
+        Person niblingOfPartner = new Person("Jane", "Doe", 'F', 30);
+        siblingOfPartner.addChild(niblingOfPartner);
+
+        //    Make list of shared nieces
+        List<Person> sharedNieces = new ArrayList<>();
+        sharedNieces.add(nibling1);
+        sharedNieces.add(nibling3);
+        sharedNieces.add(niblingOfPartner);
 
         //act
         //assert
-        assertEquals(nieces, person.getNieces());
-        assertEquals(2, person.getNieces().size());
+        assertEquals(sharedNieces, person.getNieces());
+        assertEquals(3, person.getNieces().size());
     }
 }
