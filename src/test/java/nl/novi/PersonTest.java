@@ -20,6 +20,7 @@ class PersonTest {
     @Test
     public void canGetAndSetCharacteristics() {
         //arrange
+        Person partner = new Person("Jane", "Doe", 'F', 30);
         Person mother = new Person("Jane", "Doe", 'F', 63);
         Person father = new Person("John", "Doe", 'M', 66);
         //act
@@ -28,6 +29,7 @@ class PersonTest {
         person.setLastName("Doe");
         person.setSex('M');
         person.setAge(30);
+        person.setPartner(partner);
         person.setMother(mother);
         person.setFather(father);
         //assert
@@ -36,6 +38,7 @@ class PersonTest {
         assertEquals("doe", person.getLastName());
         assertEquals('m', person.getSex());
         assertEquals(30, person.getAge());
+        assertEquals(partner, person.getPartner());
         assertEquals(mother, person.getMother());
         assertEquals(father, person.getFather());
     }
@@ -57,29 +60,52 @@ class PersonTest {
     @Test
     public void canGetAndSetChildren() {
         //arrange
+        Person partner = new Person("Jane", "Doe", 'F', 30);
+        person.setPartner(partner);
+
+        Person child1 = new Person("Jane", "Doe", 'F', 4);
+        Person child2 = new Person("John", "Doe", 'M', 2);
+        Person child3 = new Person("Jane", "Doe", 'F', 1);
+        partner.addChild(child3);
+
         List<Person> children = new ArrayList<>();
-        Person child1 = new Person("Jane", "Doe", 'F', 30);
-        Person child2 = new Person("John", "Doe", 'M', 30);
         children.add(child1);
         children.add(child2);
+
+        List<Person> sharedChildren = new ArrayList<>();
+        sharedChildren.add(child1);
+        sharedChildren.add(child2);
+        sharedChildren.add(child3);
         //act
         person.setChildren(children);
         //assert
-        assertEquals(children, person.getChildren());
+        assertEquals(sharedChildren, person.getChildren());
     }
 
     @Test
     public void canGetAndSetPets() {
         //arrange
-        List<Pet> pets = new ArrayList<>();
+        Person partner = new Person("Jane", "Doe", 'F', 30);
+        person.setPartner(partner);
+
         Pet pet1 = new Pet("Izar", 6, "Alaskan Husky");
         Pet pet2 = new Pet("Maya", 3, "Siberian Husky");
+        Pet pet3 = new Pet("Leia", 1, "Siberian Husky");
+        partner.addPet(pet3);
+
+        List<Pet> pets = new ArrayList<>();
         pets.add(pet1);
         pets.add(pet2);
+
+        List<Pet> sharedPets = new ArrayList<>();
+        sharedPets.add(pet1);
+        sharedPets.add(pet2);
+        sharedPets.add(pet3);
+
         //act
         person.setPets(pets);
         //assert
-        assertEquals(pets, person.getPets());
+        assertEquals(sharedPets, person.getPets());
     }
 
     //////////////////// OTHER METHODS ////////////////////
@@ -129,19 +155,19 @@ class PersonTest {
     @Test
     public void canGetGrandChildren() {
         //arrange
-        // Create and add children
+        //    Create and add children
         Person child1 = new Person("Jane", "Doe", 'F', 30);
         person.addChild(child1);
         Person child2 = new Person("John", "Doe", 'M', 28);
         person.addChild(child2);
-        // Create and add children of children
+        //    Create and add grandchildren
         Person grandChild1 = new Person("Jane", "Doe", 'F', 4);
         Person grandChild2 = new Person("John", "Doe", 'M', 2);
         child1.addChild(grandChild1);
         child1.addChild(grandChild2);
-        Person grandChild3 = new Person("John", "Doe", 'F', 1);
+        Person grandChild3 = new Person("John", "Doe", 'M', 1);
         child2.addChild(grandChild3);
-        // Make list of grandchildren
+        //    Make list of grandchildren
         List<Person> grandChildren = new ArrayList<>();
         grandChildren.add(grandChild1);
         grandChildren.add(grandChild2);
@@ -151,5 +177,61 @@ class PersonTest {
         //assert
         assertEquals(grandChildren, person.getGrandChildren());
         assertEquals(3, person.getGrandChildren().size());
+    }
+
+    //////////////////// BONUS METHODS ////////////////////
+
+    @Test
+    public void canGetGrandPets() {
+        //arrange
+        //    Create and add children
+        Person child1 = new Person("Jane", "Doe", 'F', 30);
+        person.addChild(child1);
+        Person child2 = new Person("John", "Doe", 'M', 28);
+        person.addChild(child2);
+        //    Create and add grandchildren
+        Person grandChild1 = new Person("Jane", "Doe", 'F', 4);
+        child1.addChild(grandChild1);
+        Person grandChild2 = new Person("John", "Doe", 'M', 1);
+        child2.addChild(grandChild2);
+        //    Create and add pets of grandchildren
+        Pet pet1 = new Pet("Izar", 6, "Alaskan Huksy");
+        grandChild1.addPet(pet1);
+        Pet pet2 = new Pet("Maya", 3, "Siberian Husky");
+        grandChild2.addPet(pet2);
+        //    Make list of pets
+        List<Pet> pets = new ArrayList<>();
+        pets.add(pet1);
+        pets.add(pet2);
+        //act
+        //assert
+        assertEquals(pets, person.getGrandPets());
+        assertEquals(2, person.getGrandPets().size());
+    }
+
+    @Test
+    public void canGetNieces() {
+        //arrange
+        //    Create and add siblings
+        Person sibling1 = new Person("Jane", "Doe", 'F', 30);
+        person.addSibling(sibling1);
+        Person sibling2 = new Person("John", "Doe", 'M', 28);
+        person.addSibling(sibling2);
+        //    Create and add niblings
+        Person nibling1 = new Person("Jane", "Doe", 'F', 4);
+        Person nibling2 = new Person("John", "Doe", 'M', 2);
+        sibling1.addChild(nibling1);
+        sibling1.addChild(nibling2);
+        Person nibling3 = new Person("Jane", "Doe", 'F', 1);
+        sibling2.addChild(nibling3);
+        //    Make list of grandchildren
+        List<Person> nieces = new ArrayList<>();
+        nieces.add(nibling1);
+        nieces.add(nibling3);
+
+        //act
+        //assert
+        assertEquals(nieces, person.getNieces());
+        assertEquals(2, person.getNieces().size());
     }
 }

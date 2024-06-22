@@ -11,6 +11,7 @@ public class Person {
     private String lastName;
     private char sex;
     private int age;
+    private Person partner;
     private Person mother;
     private Person father;
     private List<Person> siblings = new ArrayList<>();
@@ -76,6 +77,15 @@ public class Person {
     }
 
     // Relationships //
+
+    public Person getPartner() {
+        return partner;
+    }
+
+    public void setPartner(Person partner) {
+        this.partner = partner;
+    }
+
     public Person getMother() {
         return mother;
     }
@@ -101,7 +111,10 @@ public class Person {
     }
 
     public List<Person> getChildren() {
-        return children;
+        List<Person> sharedChildren = new ArrayList<>();
+        sharedChildren.addAll(children);
+        sharedChildren.addAll(partner.children);
+        return sharedChildren;
     }
 
     public void setChildren(List<Person> children) {
@@ -109,7 +122,10 @@ public class Person {
     }
 
     public List<Pet> getPets() {
-        return pets;
+        List<Pet> sharedPets = new ArrayList<>();
+        sharedPets.addAll(pets);
+        sharedPets.addAll(partner.pets);
+        return sharedPets;
     }
 
     public void setPets(List<Pet> pets) {
@@ -137,11 +153,44 @@ public class Person {
 
     public List<Person> getGrandChildren() {
         List<Person> grandChildren = new ArrayList<>();
+        // Add own grandchildren
         for (Person child : children) {
             for (Person grandChild : child.children) {
                 grandChildren.add(grandChild);
             }
         }
+//        // Add grandchildren through partner
+//        for (Person child : partner.children) {
+//            for (Person grandChild : child.children) {
+//                grandChildren.add(grandChild);
+//            }
+//        }
         return grandChildren;
+    }
+
+    //////////////////// BONUS METHODS ////////////////////
+
+    public List<Pet> getGrandPets() {
+        List<Pet> grandPets = new ArrayList<>();
+        for (Person child : children) {
+            for (Person grandChild : child.children) {
+                for (Pet pet : grandChild.pets) {
+                    grandPets.add(pet);
+                }
+            }
+        }
+        return grandPets;
+    }
+
+    public List<Person> getNieces() {
+        List<Person> nieces = new ArrayList<>();
+        for (Person sibling : siblings) {
+            for (Person nibling : sibling.children) {
+                if (nibling.sex == 'f') {
+                    nieces.add(nibling);
+                }
+            }
+        }
+        return nieces;
     }
 }
